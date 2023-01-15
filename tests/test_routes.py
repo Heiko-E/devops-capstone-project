@@ -123,15 +123,27 @@ class TestAccountService(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
-    def test_list_accounts(self):
-        """It should List all Accounts"""
-        account = self._create_accounts(1)[0]
+    def test_list_multiple_accounts(self):
+        """It should List all Accounts in the database"""
+        size = 4
+        test_accounts = self._create_accounts(size)
         resp = self.client.get(
             f"{BASE_URL}", content_type="application/json"
         )
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
         self.assertIsInstance(data,list)
-        self.assertEqual(len(data),1)
-        self.assertIsInstance(data[0],dict)
-        self.assertEqual(data[0],account.serialize())
+        self.assertEqual(len(data),size)
+        for idx in range(size):
+            self.assertIsInstance(data[idx],dict)
+            self.assertEqual(data[idx],test_accounts[idx].serialize())
+
+    def test_list_empty_accounts(self):
+        """It should List all Accounts of an empty database"""
+        resp = self.client.get(
+            f"{BASE_URL}", content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertIsInstance(data,list)
+        self.assertEqual(len(data),0)
