@@ -182,7 +182,7 @@ class TestAccountService(TestCase):
         account.address = '1234 first street\nNo City, 45678'
         account.phone_number = '0815 4711'
         account.date_joined = datetime.date(2017, 6, 6)
-        resp = self.client.post(
+        resp = self.client.put(
             f"{BASE_URL}/{account.id}",
             json=account.serialize(),
             content_type="application/json"
@@ -199,7 +199,7 @@ class TestAccountService(TestCase):
     def test_update_account_not_found(self):
         """It should not Update an Account that is not found"""
         account = self._create_accounts(1)[0]
-        resp = self.client.post(
+        resp = self.client.put(
             f"{BASE_URL}/{0}",
             json=account.serialize(),
             content_type="application/json"
