@@ -64,7 +64,6 @@ def list_accounts():
     This endpoint will list all accounts
     """
     app.logger.info("Request to list all Accounts")
-    check_content_type("application/json")
     accounts = Account.all()
     account_list = [account.serialize() for account in accounts]
     app.logger.info("Returning [%s] accounts", len(account_list))
@@ -101,6 +100,7 @@ def update_account(account_id):
     account = Account.find(account_id)
     if not account:
         abort(status.HTTP_404_NOT_FOUND, f"Account with id [{account_id}] could not be found.")
+    check_content_type("application/json")
     account.deserialize(request.get_json())
     account.update()
     return account.serialize(), status.HTTP_200_OK
