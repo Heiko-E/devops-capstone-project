@@ -7,6 +7,7 @@ Test cases can be run with the following:
 """
 import os
 import logging
+import datetime
 from unittest import TestCase
 from tests.factories import AccountFactory
 from service.common import status  # HTTP Status Codes
@@ -170,5 +171,37 @@ class TestAccountService(TestCase):
         """It should not Read an Account from an empty database"""
         resp = self.client.get(
             f"{BASE_URL}/{4711}", content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_account(self):
+        """It should Update a single Account"""
+        account = self._create_accounts(1)[0]
+        account.name ='testuser'
+        account.email = 'test@user.com'
+        account.address = '1234 first street\nNo City, 45678'
+        account.phone_number = '0815 4711'
+        account.date_joined = datetime.date(2017, 6, 6)
+        resp = self.client.post(
+            f"{BASE_URL}/{account.id}",
+            json=account.serialize(),
+            content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        # Check the data is correct
+        new_account = resp.get_json()
+        self.assertEqual(new_account["name"], account.name)
+        self.assertEqual(new_account["email"], account.email)
+        self.assertEqual(new_account["address"], account.address)
+        self.assertEqual(new_account["phone_number"], account.phone_number)
+        self.assertEqual(new_account["date_joined"], str(account.date_joined))
+
+    def test_update_account_not_found(self):
+        """It should not Update an Account that is not found"""
+        account = self._create_accounts(1)[0]
+        resp = self.client.post(
+            f"{BASE_URL}/{0}",
+            json=account.serialize(),
+            content_type="application/json"
         )
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
