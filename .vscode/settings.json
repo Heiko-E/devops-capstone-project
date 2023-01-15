@@ -12,8 +12,10 @@
     "python.testing.unittestEnabled": true,
     "python.testing.pytestEnabled": false,
     "cSpell.words": [
+        "isready",
         "jsonify",
         "nosetests",
-        "SQLALCHEMY"
+        "SQLALCHEMY",
+        "testdb"
     ]
 }
