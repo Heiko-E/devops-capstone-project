@@ -70,8 +70,10 @@ def list_accounts():
     app.logger.info("Request to list all Accounts")
     check_content_type("application/json")
     accounts = Account.all()
-    message = accounts.serialize()
-    return make_response(jsonify(message), status.HTTP_201_CREATED)
+    message = []
+    for account in accounts:
+        message.append(account.serialize())
+    return make_response(jsonify(message), status.HTTP_200_OK)
 
 
 ######################################################################

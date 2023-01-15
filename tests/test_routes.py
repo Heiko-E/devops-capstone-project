@@ -134,5 +134,4 @@ class TestAccountService(TestCase):
         self.assertIsInstance(data,list)
         self.assertEqual(len(data),1)
         self.assertIsInstance(data[0],dict)
-        self.assertEqual(data[0]["name"], account.name)
-        
+        self.assertEqual(data[0],account.serialize())
