@@ -12,6 +12,7 @@
     "python.testing.unittestEnabled": true,
     "python.testing.pytestEnabled": false,
     "cSpell.words": [
+        "gunicorn",
         "isready",
         "jsonify",
         "nosetests",
