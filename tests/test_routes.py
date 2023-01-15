@@ -165,3 +165,10 @@ class TestAccountService(TestCase):
             f"{BASE_URL}/{0}", content_type="application/json"
         )
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_get_account_empty_data(self):
+        """It should not Read an Account from an empty database"""
+        resp = self.client.get(
+            f"{BASE_URL}/{4711}", content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
