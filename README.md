@@ -98,7 +98,7 @@ Complete this microservice by implementing REST API's for `READ`, `UPDATE`, `DEL
 
 ## Local Kubernetes Development
 
-This repo can also be used for local Kubernetes development. It is not advised that you run these commands in the Cloud IDE environment. The purpose of these commands are to simulate the Cloud IDE environment locally on your computer. 
+This repo can also be used for local Kubernetes development. It is not advised that you run these commands in the Cloud IDE environment. The purpose of these commands are to simulate the Cloud IDE environment locally on your computer.
 
 At a minimum, you will need [Docker Desktop](https://www.docker.com/products/docker-desktop) installed on your computer. For the full development environment, you will also need [Visual Studio Code](https://code.visualstudio.com) with the [Remote Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension from the Visual Studio Marketplace. All of these can be installed manually by clicking on the links above or you can use a package manager like **Homebrew** on Mac of **Chocolatey** on Windows.
 
@@ -107,22 +107,87 @@ Please only use these commands for working stand-alone on your own computer with
 1. Bring up a local K3D Kubernetes cluster
 
     ```bash
-    $ make cluster
+    make cluster
     ```
 
 2. Install Tekton
 
     ```bash
-    $ make tekton
+    make tekton
     ```
 
 3. Install the ClusterTasks that the Cloud IDE has
 
     ```bash
-    $ make clustertasks
+    make clustertasks
     ```
 
 You can now perform Tekton development locally, just like in the Cloud IDE lab environment.
+
+## Setup Open Shift
+
+Setup the environment
+
+```bash
+export GITHUB_ACCOUNT=Heiko-E
+git clone <https://github.com/$GITHUB_ACCOUNT/devops-capstone-project.git>
+cd devops-capstone-project
+bash ./bin/setup.sh
+exit
+```
+
+New Terminal to set up Tekton:
+
+```bash
+cd devops-capstone-project
+tkn hub install task flake8
+tkn hub install task git-clone
+```
+
+If the install command for git-clone is not working use:
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-clone/0.9/git-clone.yaml
+```
+
+Create storage and apply tasks and pipeline:
+
+```bash
+oc create -f tekton/pvc.yaml
+oc apply -f tekton/tasks.yaml
+oc apply -f tekton/pipeline.yaml
+```
+
+Check if postgresql is available:
+
+```bash
+oc get svc postgresql
+```
+
+If not get it:
+
+```bash
+oc new-app postgresql-ephemeral
+oc get svc postgresql
+```
+
+Check if the required pods are running:
+
+```bash
+oc get pods
+```
+
+Run the pipeline:
+
+```bash
+tkn pipeline start cd-pipeline -p repo-url="https://github.com/$GITHUB_ACCOUNT/devops-capstone-project.git" -p branch=main -p build-image=image-registry.openshift-image-registry.svc:5000/$SN_ICR_NAMESPACE/accounts:1 -w name=pipeline-workspace,claimName=pipelinerun-pvc -s pipeline --showlog
+```
+
+Check if deployment to open shift was successfully:
+
+```bash
+oc get all -l app=accounts
+```
 
 ## Author
 
@@ -132,4 +197,4 @@ You can now perform Tekton development locally, just like in the Cloud IDE lab e
 
 Licensed under the Apache License. See [LICENSE](LICENSE)
 
-## <h3 align="center"> © IBM Corporation 2022. All rights reserved. <h3/>
+<h3 align="center"> © IBM Corporation 2022. All rights reserved. <h3/>
