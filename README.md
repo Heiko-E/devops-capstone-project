@@ -124,6 +124,60 @@ Please only use these commands for working stand-alone on your own computer with
 
 You can now perform Tekton development locally, just like in the Cloud IDE lab environment.
 
+## Setup Open Shift
+
+Setup the environment
+
+    export GITHUB_ACCOUNT=Heiko-E
+    git clone https://github.com/$GITHUB_ACCOUNT/devops-capstone-project.git
+    cd devops-capstone-project
+    bash ./bin/setup.sh
+    exit
+
+New Terminal to set up Tekton:
+
+    cd devops-capstone-project
+    tkn hub install task flake8
+    tkn hub install task git-clone
+
+If the install command for git-clone is not working use:
+
+    kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-clone/0.9/git-clone.yaml
+
+Create storage and apply tasks and pipeline:
+
+    oc create -f tekton/pvc.yaml
+    oc apply -f tekton/tasks.yaml
+    oc apply -f tekton/pipeline.yaml
+Check if postgresql is available:
+
+    oc get svc postgresql
+
+If not get it:
+
+    oc new-app postgresql-ephemeral
+    oc get svc postgresql
+ 
+ Check if the required pods are running:
+ 
+    oc get pods
+
+Run the pipeline:
+
+    tkn pipeline start cd-pipeline \
+        -p repo-url="https://github.com/$GITHUB_ACCOUNT/devops-capstone-project.git" \
+        -p branch=main \
+        -p build-image=image-registry.openshift-image-registry.svc:5000/$SN_ICR_NAMESPACE/accounts:1 \
+        -w name=pipeline-workspace,claimName=pipelinerun-pvc \
+        -s pipeline \
+        --showlog
+
+Check if deployment to open shift was successfully:
+
+    oc get all -l app=accounts
+
+
+
 ## Author
 
 [John Rofrano](https://www.coursera.org/instructor/johnrofrano), Senior Technical Staff Member, DevOps Champion, @ IBM Research, and Instructor @ Coursera
