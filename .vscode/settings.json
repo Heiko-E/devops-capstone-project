@@ -19,5 +19,8 @@
         "SQLALCHEMY",
         "tekton",
         "testdb"
-    ]
+    ],
+    "editor.formatOnSave": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.lintOnSave": true
 }

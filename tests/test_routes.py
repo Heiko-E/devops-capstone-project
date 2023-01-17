@@ -125,7 +125,8 @@ class TestAccountService(TestCase):
             json=account.serialize(),
             content_type="test/html"
         )
-        self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+        self.assertEqual(response.status_code,
+                         status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
     def test_list_multiple_accounts(self):
         """It should List all Accounts in the database"""
@@ -136,11 +137,11 @@ class TestAccountService(TestCase):
         )
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
-        self.assertIsInstance(data,list)
-        self.assertEqual(len(data),size)
+        self.assertIsInstance(data, list)
+        self.assertEqual(len(data), size)
         for idx in range(size):
-            self.assertIsInstance(data[idx],dict)
-            self.assertEqual(data[idx],test_accounts[idx].serialize())
+            self.assertIsInstance(data[idx], dict)
+            self.assertEqual(data[idx], test_accounts[idx].serialize())
 
     def test_list_empty_accounts(self):
         """It should List all Accounts of an empty database"""
@@ -149,8 +150,8 @@ class TestAccountService(TestCase):
         )
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
-        self.assertIsInstance(data,list)
-        self.assertEqual(len(data),0)
+        self.assertIsInstance(data, list)
+        self.assertEqual(len(data), 0)
 
     def test_get_account(self):
         """It should Read a single Account"""
@@ -180,7 +181,7 @@ class TestAccountService(TestCase):
     def test_update_account(self):
         """It should Update a single Account"""
         account = self._create_accounts(1)[0]
-        account.name ='testuser'
+        account.name = 'testuser'
         account.email = 'test@user.com'
         account.address = '1234 first street\nNo City, 45678'
         account.phone_number = '0815 4711'
@@ -240,7 +241,8 @@ class TestAccountService(TestCase):
             'X-Frame-Options': 'SAMEORIGIN',
             'X-XSS-Protection': '1; mode=block',
             'X-Content-Type-Options': 'nosniff',
-            'Content-Security-Policy': 'default-src \'self\'; object-src \'none\'',
+            'Content-Security-Policy':
+            'default-src \'self\'; object-src \'none\'',
             'Referrer-Policy': 'strict-origin-when-cross-origin'
         }
         for key, value in headers.items():
@@ -251,4 +253,5 @@ class TestAccountService(TestCase):
         response = self.client.get('/', environ_overrides=HTTPS_ENVIRON)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Check for the CORS header
-        self.assertEqual(response.headers.get('Access-Control-Allow-Origin'), '*')
+        self.assertEqual(response.headers.get(
+            'Access-Control-Allow-Origin'), '*')
