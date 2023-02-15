@@ -128,39 +128,54 @@ You can now perform Tekton development locally, just like in the Cloud IDE lab e
 
 Setup the environment
 
-    export GITHUB_ACCOUNT=Heiko-E
-    git clone <https://github.com/$GITHUB_ACCOUNT/devops-capstone-project.git>
-    cd devops-capstone-project
-    bash ./bin/setup.sh
-    exit
+```bash
+export GITHUB_ACCOUNT=Heiko-E
+git clone <https://github.com/$GITHUB_ACCOUNT/devops-capstone-project.git>
+cd devops-capstone-project
+bash ./bin/setup.sh
+exit
+```
 
 New Terminal to set up Tekton:
 
-    cd devops-capstone-project
-    tkn hub install task flake8
-    tkn hub install task git-clone
+```bash
+cd devops-capstone-project
+tkn hub install task flake8
+tkn hub install task git-clone
+```
 
 If the install command for git-clone is not working use:
 
-    kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-clone/0.9/git-clone.yaml
+```bash
+kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-clone/0.9/git-clone.yaml
+```
 
 Create storage and apply tasks and pipeline:
 
-    oc create -f tekton/pvc.yaml
-    oc apply -f tekton/tasks.yaml
-    oc apply -f tekton/pipeline.yaml
+```bash
+oc create -f tekton/pvc.yaml
+oc apply -f tekton/tasks.yaml
+oc apply -f tekton/pipeline.yaml
+```
+
 Check if postgresql is available:
 
-    oc get svc postgresql
+```bash
+oc get svc postgresql
+```
 
 If not get it:
 
-    oc new-app postgresql-ephemeral
-    oc get svc postgresql
+```bash
+oc new-app postgresql-ephemeral
+oc get svc postgresql
+```
 
- Check if the required pods are running:
+Check if the required pods are running:
 
-    oc get pods
+```bash
+oc get pods
+```
 
 Run the pipeline:
 
@@ -182,4 +197,4 @@ oc get all -l app=accounts
 
 Licensed under the Apache License. See [LICENSE](LICENSE)
 
-## <h3 align="center"> © IBM Corporation 2022. All rights reserved. <h3/>
+<h3 align="center"> © IBM Corporation 2022. All rights reserved. <h3/>
